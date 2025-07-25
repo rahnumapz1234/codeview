@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahnuma Parween - AI-Powered Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter & Great Vibes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Three.js for 3D Models -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* --- REFINED DUAL THEME COLOR SYSTEM --- */
+        :root {
+            /* Light Theme (Default) */
+            --bg-color: #f8f9fa;
+            --card-bg-color: rgba(255, 255, 255, 0.6);
+            --text-color: #334155;
+            --heading-color: #1e293b;
+            --subtle-text-color: #64748b;
+            --accent-color: #4f46e5;
+            --accent-color-light: #e0e7ff;
+            --border-color: rgba(226, 232, 240, 0.7);
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --shadow-color-hover: rgba(0, 0, 0, 0.1);
+            --menu-hover-bg: #4f46e5;
+            --menu-hover-text: #ffffff;
+            --aurora-color-1: #4f46e5;
+            --aurora-color-2: #a855f7;
+            --aurora-color-3: #ec4899;
+            --hero-blob-color: #e0e7ff;
+            --threejs-model-color: 0x4f46e5; /* 3D Model Color for Light Mode */
+        }
+
+        html.dark {
+            /* Dark Theme */
+            --bg-color: #0f172a;
+            --card-bg-color: rgba(30, 41, 59, 0.6);
+            --text-color: #cbd5e1;
+            --heading-color: #f1f5f9;
+            --subtle-text-color: #94a3b8;
+            --accent-color: #818cf8;
+            --accent-color-light: rgba(99, 102, 241, 0.2);
+            --border-color: rgba(51, 65, 85, 0.7);
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --shadow-color-hover: rgba(0, 0, 0, 0.3);
+            --menu-hover-bg: #818cf8;
+            --menu-hover-text: #0f172a;
+            --aurora-color-1: #818cf8;
+            --aurora-color-2: #c084fc;
+            --aurora-color-3: #f472b6;
+            --hero-blob-color: #1e293b;
+            --threejs-model-color: 0x818cf8; /* 3D Model Color for Dark Mode */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            cursor: default;
+            position: relative;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* --- Preloader Styles --- */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10002;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .welcome-text {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            color: var(--heading-color);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
+        .welcome-text.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in;
+        }
+        .main-content.loaded {
+            opacity: 1;
+        }
+
+
+        /* --- Interactive Particle Background --- */
+        #interactive-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* --- Scroll Progress Bar --- */
+        #scroll-progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: var(--accent-color);
+            width: 0%; z-index: 10001; transition: width 0.1s ease-out, background-color 0.4s ease;
+        }
+
+        /* --- Highlighting Glassmorphism Card Style --- */
+        .glass-card {
+            background: var(--card-bg-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease, border-color 0.4s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 25px var(--shadow-color-hover), 0 0 20px var(--accent-color-light);
+        }
+
+        /* --- Typography & Headings --- */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--heading-color);
+            transition: color 0.4s ease;
+            letter-spacing: -0.02em;
+        }
+        h2 { letter-spacing: -0.025em; }
+        p { line-height: 1.7; }
+
+        /* --- Gradient Text (Themed) --- */
+        .text-gradient {
+            background: linear-gradient(45deg, var(--aurora-color-1), var(--aurora-color-2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; text-fill-color: transparent;
+        }
+
+        /* --- Text Animations --- */
+        @keyframes aurora-shimmer {
+            0% { background-position: 200% 50%; }
+            100% { background-position: -200% 50%; }
+        }
+
+        .aurora-text {
+            background: linear-gradient(90deg, 
+                var(--aurora-color-1), 
+                var(--aurora-color-2), 
+                var(--aurora-color-3),
+                var(--aurora-color-2), 
+                var(--aurora-color-1)
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+            animation: aurora-shimmer 6s linear infinite;
+        }
+        
+        /* --- Cursor Effect --- */
+        .cursor-dot {
+            position: fixed; width: 8px; height: 8px;
+            background-color: var(--accent-color); border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: background-color 0.4s ease, transform 0.2s ease-out;
+        }
+
+        /* --- Main Navigation Bar --- */
+        #main-nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            background: var(--card-bg-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+        .nav-link {
+            color: var(--subtle-text-color); font-weight: 500;
+            position: relative; transition: color 0.3s ease;
+        }
+        .nav-link:hover { color: var(--heading-color); }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -4px; left: 50%; transform: translateX(-50%);
+            background-color: var(--accent-color); transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        /* --- Mobile Menu --- */
+        .mobile-menu {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--bg-color); z-index: 49;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .mobile-menu.open { transform: translateY(0); }
+        .mobile-menu a {
+            font-size: 1.5rem; font-weight: 600;
+            color: var(--heading-color); padding: 1rem;
+        }
+        
+        /* --- 3D Model Containers --- */
+        #hero-3d-container, #about-3d-container {
+            cursor: grab;
+        }
+        #hero-3d-container:active, #about-3d-container:active {
+            cursor: grabbing;
+        }
+        .skill-3d-container {
+            width: 100%;
+            height: 80px; /* Give a fixed height to the 3D containers in skill cards */
+            margin-bottom: 1rem;
+            cursor: grab;
+        }
+        .skill-3d-container:active {
+            cursor: grabbing;
+        }
+
+
+        /* --- Luminous Effect for Links & Icons --- */
+        .luminous-hover { transition: color 0.3s ease, filter 0.3s ease; }
+        .luminous-hover:hover { color: var(--accent-color); filter: drop-shadow(0 0 8px var(--accent-color)); }
+
+        /* --- Contact & Chat Inputs --- */
+        .form-input {
+            background-color: var(--bg-color); border: 1px solid var(--border-color);
+            border-radius: 0.5rem; padding: 0.75rem 1rem;
+            color: var(--text-color); transition: all 0.3s ease;
+        }
+        .form-input:focus { 
+            outline: none; border-color: var(--accent-color); 
+            box-shadow: 0 0 0 3px var(--accent-color-light); 
+        }
+        
+        /* --- Gemini AI Chatbot Styles --- */
+        #ai-chat-button {
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        #ai-chat-button:hover { transform: scale(1.1); }
+        #ai-chat-window {
+            transform: scale(0.95) translateY(20px); opacity: 0; visibility: hidden;
+            transform-origin: bottom right;
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+        }
+        #ai-chat-window.open { transform: scale(1) translateY(0); opacity: 1; visibility: visible; }
+        .chat-header { background-color: transparent; }
+        .chat-message.user .bubble { background-color: #4f46e5; color: white; border-bottom-right-radius: 0.25rem; }
+        html.dark .chat-message.user .bubble { background-color: #6366f1; }
+        .chat-message.assistant .bubble { background-color: var(--bg-color); color: var(--text-color); border-bottom-left-radius: 0.25rem; transition: background-color 0.4s ease, color 0.4s ease; }
+        #chat-send-btn { background-color: #4f46e5; transition: background-color 0.2s ease; }
+        #chat-send-btn:hover { background-color: #4338ca; }
+        html.dark #chat-send-btn { background-color: #6366f1; }
+        html.dark #chat-send-btn:hover { background-color: #4f46e5; }
+        
+        /* --- NEW ANIMATIONS --- */
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .fade-in-animation {
+            animation: fade-in 1s ease-out forwards;
+        }
+        
+        .contact-btn {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+        .animate-delay-400 { animation-delay: 0.4s; }
+        .animate-delay-500 { animation-delay: 0.5s; }
+        .animate-delay-600 { animation-delay: 0.6s; }
+        .animate-delay-700 { animation-delay: 0.7s; }
+        .animate-delay-800 { animation-delay: 0.8s; }
+        .animate-delay-900 { animation-delay: 0.9s; }
+        
+        /* Particle Control Styles */
+        #particle-controls {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 10000;
+            background: var(--card-bg-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            width: 240px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transform: translateX(110%);
+            transition: transform 0.4s ease;
+        }
+        
+        #particle-controls.open {
+            transform: translateX(0);
+        }
+        
+        #particle-controls h3 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            color: var(--heading-color);
+            font-weight: 600;
+        }
+        
+        .particle-control-group {
+            margin-bottom: 12px;
+        }
+        
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.875rem;
+            color: var(--text-color);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, var(--accent-color), var(--accent-color)) no-repeat;
+            background-size: var(--fill-percent, 0%) 100%;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .slider-value {
+            width: 40px;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-color);
+        }
+        
+        .toggle-btn {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 10001;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .stats-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--card-bg-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            color: var(--text-color);
+            z-index: 10000;
+        }
+
+        /* --- Journey Timeline Styles --- */
+        #journey-timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        #journey-timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--accent-color);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+        .timeline-container {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+        .timeline-container.left {
+            left: 0;
+        }
+        .timeline-container.right {
+            left: 50%;
+        }
+        .timeline-container::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -17px;
+            background-color: var(--bg-color);
+            border: 4px solid var(--accent-color);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .timeline-container.right::after {
+            left: -16px;
+        }
+        .timeline-content-box {
+            padding: 20px 30px;
+            position: relative;
+            border-radius: 6px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .timeline-content-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline-date {
+            font-weight: 700;
+            color: var(--heading-color);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-desc {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        /* Responsive adjustments for timeline */
+        @media screen and (max-width: 768px) {
+            #journey-timeline::after {
+                left: 31px;
+            }
+            .timeline-container {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            .timeline-container.right {
+                left: 0%;
+            }
+            .timeline-container.left::after, .timeline-container.right::after {
+                left: 15px;
+            }
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+    <div id="preloader">
+        <div class="welcome-text">Welcome to My Portfolio</div>
+    </div>
+
+    <canvas id="interactive-background"></canvas>
+    <div id="cursor-dot" class="cursor-dot" style="display: none;"></div>
+    <div id="scroll-progress-bar"></div>
+    
+    <!-- Particle Controls -->
+    <div id="particle-controls">
+        <h3>
+            <span>Particle Settings</span>
+            <i id="close-controls" class="fas fa-times cursor-pointer"></i>
+        </h3>
+        <div class="particle-control-group">
+            <div class="control-label">
+                <span>Density</span>
+                <span id="density-value">Medium</span>
+            </div>
+            <div class="slider-container">
+                <input type="range" id="density-slider" min="0" max="100" value="50">
+            </div>
+        </div>
+        <div class="particle-control-group">
+            <div class="control-label">
+                <span>Size</span>
+                <span id="size-value">Medium</span>
+            </div>
+            <div class="slider-container">
+                <input type="range" id="size-slider" min="0.5" max="3" step="0.1" value="1.5">
+            </div>
+        </div>
+        <div class="particle-control-group">
+            <div class="control-label">
+                <span>Speed</span>
+                <span id="speed-value">Medium</span>
+            </div>
+            <div class="slider-container">
+                <input type="range" id="speed-slider" min="0.5" max="3" step="0.1" value="1.0">
+            </div>
+        </div>
+        <div class="particle-control-group">
+            <div class="control-label">
+                <span>Connectivity</span>
+                <span id="connectivity-value">Medium</span>
+            </div>
+            <div class="slider-container">
+                <input type="range" id="connectivity-slider" min="0" max="100" value="50">
+            </div>
+        </div>
+    </div>
+    
+    <button id="toggle-controls" class="toggle-btn">
+        <i class="fas fa-sliders-h"></i>
+    </button>
+    
+    <div class="stats-panel">
+        Particles: <span id="particle-count">0</span> | FPS: <span id="fps-counter">0</span>
+    </div>
+
+    <div class="main-content">
+        <!-- Main Navigation Bar -->
+        <nav id="main-nav">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+                <a href="#" class="text-xl font-bold aurora-text">Rahnuma Parween</a>
+                
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="#journey" class="nav-link">Journey</a>
+                    <a href="#skills" class="nav-link">Skills</a>
+                    <a href="#projects" class="nav-link">Projects</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button id="theme-toggle-button" class="w-11 h-11 flex items-center justify-center rounded-full text-subtle-text-color hover:text-accent-color transition-colors">
+                        <i class="fas fa-moon" id="theme-icon-moon"></i>
+                        <i class="fas fa-sun" id="theme-icon-sun" style="display: none;"></i>
+                    </button>
+                    <button id="hamburgerToggle" class="md:hidden w-11 h-11 flex flex-col items-center justify-center gap-1.5 z-50">
+                        <span class="w-6 h-0.5 bg-heading-color rounded-full transition-transform duration-300"></span>
+                        <span class="w-6 h-0.5 bg-heading-color rounded-full transition-opacity duration-300"></span>
+                        <span class="w-6 h-0.5 bg-heading-color rounded-full transition-transform duration-300"></span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu">
+            <a href="#about" class="mobile-menu-link">About</a>
+            <a href="#journey" class="mobile-menu-link">Journey</a>
+            <a href="#skills" class="mobile-menu-link">Skills</a>
+            <a href="#projects" class="mobile-menu-link">Projects</a>
+            <a href="#contact" class="mobile-menu-link">Contact</a>
+        </div>
+
+        <header class="container mx-auto px-4 sm:px-6 lg:px-8 min-h-screen pt-20 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <!-- Left Column: Text -->
+            <div class="text-center md:text-left">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight fade-in-animation animate-delay-100">
+                    Hi, I'm <span class="aurora-text">Rahnuma</span>
+                </h1>
+                <h3 class="text-xl font-medium text-subtle-text-color my-4 fade-in-animation animate-delay-300">
+                    I design and build responsive, user-friendly web applications.
+                </h3>
+                <p class="text-base mb-8 max-w-md mx-auto md:mx-0 fade-in-animation animate-delay-500">
+                    A detail-oriented developer from Patna, Bihar, transforming ideas into seamless and engaging digital experiences.
+                </p>
+                <a href="#contact" class="contact-btn inline-flex items-center px-8 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 hover:shadow-[0_0_20px_var(--accent-color-light)] hover:transform hover:-translate-y-1 fade-in-animation animate-delay-700">
+                    Contact Me <i class="fas fa-paper-plane ml-2"></i>
+                </a>
+            </div>
+            
+            <!-- Right Column: 3D Model -->
+            <div class="relative w-full h-full flex items-center justify-center min-h-[400px] md:min-h-full fade-in-animation animate-delay-900">
+                <div id="hero-3d-container" class="w-full h-full"></div>
+            </div>
+
+        </header>
+
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <section id="about" class="py-24 sm:py-32">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-gradient fade-in-animation">About Me</h2>
+                    <p class="text-center text-lg text-subtle-text-color mt-4 fade-in-animation animate-delay-200">A quick summary of who I am and what I do.</p>
+                </div>
+                <div class="glass-card flex flex-col md:flex-row items-center gap-12 p-8 sm:p-12 rounded-2xl fade-in-animation animate-delay-400">
+                    <div class="md:w-1/3 flex justify-center">
+                        <!-- 3D Model Container for About Section -->
+                        <div id="about-3d-container" class="w-48 h-48 sm:w-64 sm:h-64"></div>
+                    </div>
+                    <div class="md:w-2/3 text-base sm:text-lg leading-relaxed text-center md:text-left">
+                        <h3 class="text-2xl font-bold mb-4 fade-in-animation animate-delay-300">Developer & Problem Solver</h3>
+                        <p class="mb-4 fade-in-animation animate-delay-400">I'm a passionate web developer with a strong foundation in front-end and back-end technologies. My goal is to write clean, efficient, and scalable code to build products that are not only visually appealing but also provide a great user experience.</p>
+                        <p class="fade-in-animation animate-delay-500">I thrive on challenges and am constantly learning to keep up with the ever-evolving tech landscape. When I'm not coding, I enjoy contributing to open-source projects and exploring new design trends.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Journey Section -->
+            <section id="journey" class="py-24 sm:py-32">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-gradient fade-in-animation">My Journey</h2>
+                    <p class="text-center text-lg text-subtle-text-color mt-4 fade-in-animation animate-delay-200">A timeline of my key milestones.</p>
+                </div>
+                <div id="journey-timeline">
+                    <!-- Timeline items will be injected here by JS -->
+                </div>
+            </section>
+
+            <section id="skills" class="py-24 sm:py-32">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-gradient">Core Competencies</h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Frontend Dev Card -->
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div id="skill-frontend-3d" class="skill-3d-container"></div>
+                        <h3 class="text-xl font-semibold mb-2">Frontend Dev</h3>
+                        <p class="text-sm">Building responsive and interactive UIs with HTML, CSS, JavaScript, and React.</p>
+                    </div>
+                    <!-- Backend Dev Card -->
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div id="skill-backend-3d" class="skill-3d-container"></div>
+                        <h3 class="text-xl font-semibold mb-2">Backend Dev</h3>
+                        <p class="text-sm">Creating robust server-side applications and APIs using Node.js and Java.</p>
+                    </div>
+                    <!-- Problem Solving Card -->
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div id="skill-problem-solving-3d" class="skill-3d-container"></div>
+                        <h3 class="text-xl font-semibold mb-2">Problem Solving</h3>
+                        <p class="text-sm">Strong foundation in Data Structures & Algorithms (C++, Java) for efficient solutions.</p>
+                    </div>
+                    <!-- Developer Tools Card -->
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div id="skill-tools-3d" class="skill-3d-container"></div>
+                        <h3 class="text-xl font-semibold mb-2">Developer Tools</h3>
+                        <p class="text-sm">Proficient with modern tools like Git, VS Code, IntelliJ, and various build tools.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects" class="py-24 sm:py-32">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-gradient">Featured Projects</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="glass-card rounded-2xl p-6">
+                        <img src="https://images.unsplash.com/photo-1557821552-17105176677c?q=80&w=1932&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://placehold.co/400x250/ffffff/4f46e5?text=E-commerce';" alt="E-commerce Project" class="rounded-lg mb-4 w-full h-48 object-cover">
+                        <h3 class="text-xl font-semibold mb-2">E-commerce Platform</h3>
+                        <p class="text-sm mb-4">A full-featured e-commerce site built with React and Node.js, including product search, cart, and payment integration.</p>
+                        <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:underline text-sm font-bold luminous-hover">View Project <i class="fas fa-external-link-alt ml-1"></i></a>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6">
+                        <img src="https://images.unsplash.com/photo-1579567761406-461487c3c1a2?q=80&w=1770&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://placehold.co/400x250/ffffff/4f46e5?text=Task+Manager';" alt="Task Manager Project" class="rounded-lg mb-4 w-full h-48 object-cover">
+                        <h3 class="text-xl font-semibold mb-2">Task Management App</h3>
+                        <p class="text-sm mb-4">A collaborative task manager with real-time updates using WebSockets, built on the MERN stack.</p>
+                        <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:underline text-sm font-bold luminous-hover">View Project <i class="fas fa-external-link-alt ml-1"></i></a>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6">
+                        <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1770&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://placehold.co/400x250/ffffff/4f46e5?text=Blog';" alt="Blog Project" class="rounded-lg mb-4 w-full h-48 object-cover">
+                        <h3 class="text-xl font-semibold mb-2">Personal Blog Site</h3>
+                        <p class="text-sm mb-4">A sleek and fast blog platform with a custom CMS, built with a static site generator for optimal performance.</p>
+                        <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:underline text-sm font-bold luminous-hover">View Project <i class="fas fa-external-link-alt ml-1"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="py-24 sm:py-32">
+                 <div class="text-center mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-center text-gradient">Get In Touch</h2>
+                </div>
+                <p class="text-lg mt-4 max-w-2xl mx-auto text-center">I'm currently open to new opportunities and collaborations. Feel free to send me a message or connect with me online.</p>
+                <div class="max-w-4xl mx-auto glass-card p-8 sm:p-12 rounded-2xl mt-16">
+                    <form action="#" class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium mb-2">Your Name</label>
+                                <input type="text" id="name" name="name" class="w-full form-input" placeholder="Rahnuma Parween">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium mb-2">Your Email</label>
+                                <input type="email" id="email" name="email" class="w-full form-input" placeholder="you@example.com">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium mb-2">Message</label>
+                            <textarea id="message" name="message" rows="5" class="w-full form-input" placeholder="Your message..."></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 hover:shadow-[0_0_20px_var(--accent-color-light)] hover:transform hover:-translate-y-1">
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer class="p-8 mt-8">
+            <div class="text-center text-subtle-text-color">
+                <div class="flex justify-center gap-6 mb-4">
+                    <a href="https://www.linkedin.com/" class="text-2xl luminous-hover" aria-label="LinkedIn Profile"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/rahnumapz1234/btech" class="text-2xl luminous-hover" aria-label="GitHub Profile"><i class="fab fa-github"></i></a>
+                    <a href="mailto:rahnuma.parween.dev@gmail.com" class="text-2xl luminous-hover" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+                <div class="text-sm">&copy; 2025 Rahnuma Parween. All Rights Reserved.</div>
+                <div class="text-xs mt-1">Made with <i class="fa-solid fa-heart text-red-500"></i> in Patna, Bihar</div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Gemini AI Chatbot UI -->
+    <button id="ai-chat-button" class="fixed bottom-8 right-8 w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl cursor-pointer z-[1002] shadow-lg">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+    </button>
+    <div id="ai-chat-window" class="fixed bottom-28 right-8 w-[90vw] max-w-md h-[60vh] max-h-[500px] rounded-2xl z-[1001] flex flex-col overflow-hidden glass-card">
+        <div class="chat-header p-4 border-b border-border-color flex justify-between items-center">
+            <h3 class="font-bold text-lg">✨ AI Portfolio Assistant</h3>
+            <button id="close-chat-btn" title="Close Chat" class="text-2xl">&times;</button>
+        </div>
+        <div class="chat-messages flex-grow p-4 overflow-y-auto"></div>
+        <div class="chat-input-area p-4 border-t border-border-color flex gap-2">
+            <input type="text" id="chat-input" class="form-input w-full" placeholder="Ask about my projects...">
+            <button id="chat-send-btn" class="flex-shrink-0 w-12 h-12 rounded-lg text-white flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Three.js 3D Model Logic ---
+            const threeScenes = [];
+
+            function initThreeScene(options) {
+                const container = document.getElementById(options.containerId);
+                if (!container) return null;
+
+                // Scene setup
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+                camera.position.z = options.cameraZ;
+
+                // Renderer setup
+                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                container.appendChild(renderer.domElement);
+
+                // Lighting
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+                scene.add(ambientLight);
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                directionalLight.position.set(5, 3, 5);
+                scene.add(directionalLight);
+
+                // Get current theme color from CSS variables
+                const getThemeColor = () => {
+                    const colorHex = getComputedStyle(document.documentElement).getPropertyValue('--threejs-model-color').trim();
+                    return parseInt(colorHex);
+                };
+
+                // --- Model Creation ---
+                let modelGroup = new THREE.Group();
+                let modelMesh;
+
+                if (options.modelType === 'earth') {
+                    const sphereGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+                    const transparentMaterial = new THREE.MeshPhongMaterial({
+                        color: getThemeColor(),
+                        transparent: true,
+                        opacity: 0.15,
+                        shininess: 50,
+                        side: THREE.FrontSide
+                    });
+                    const transparentSphere = new THREE.Mesh(sphereGeometry, transparentMaterial);
+                    modelGroup.add(transparentSphere);
+
+                    const wireframeMaterial = new THREE.MeshBasicMaterial({
+                        color: getThemeColor(),
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.3
+                    });
+                    const wireframeSphere = new THREE.Mesh(sphereGeometry, wireframeMaterial);
+                    modelGroup.add(wireframeSphere);
+                    modelMesh = modelGroup;
+
+                } else if (options.modelType === 'brain') {
+                    const mainSphere = new THREE.Mesh(new THREE.SphereGeometry(0.8, 32, 32), new THREE.MeshStandardMaterial({ color: getThemeColor(), transparent: true, opacity: 0.5 }));
+                    modelGroup.add(mainSphere);
+                    for (let i = 0; i < 50; i++) {
+                        const particle = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshStandardMaterial({ color: getThemeColor() }));
+                        const theta = Math.random() * 2 * Math.PI;
+                        const phi = Math.acos(2 * Math.random() - 1);
+                        const radius = 0.8 + (Math.random() - 0.5) * 0.5;
+                        particle.position.set(
+                            radius * Math.sin(phi) * Math.cos(theta),
+                            radius * Math.sin(phi) * Math.sin(theta),
+                            radius * Math.cos(phi)
+                        );
+                        modelGroup.add(particle);
+                    }
+                    modelMesh = modelGroup;
+                } else if (options.modelType === 'laptop') {
+                    const screen = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1, 0.1), new THREE.MeshStandardMaterial({ color: getThemeColor() }));
+                    const base = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.1, 1), new THREE.MeshStandardMaterial({ color: getThemeColor() }));
+                    base.position.y = -0.5;
+                    modelGroup.add(screen);
+                    modelGroup.add(base);
+                    modelMesh = modelGroup;
+                } else if (options.modelType === 'server') {
+                    const rack = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2, 0.8), new THREE.MeshStandardMaterial({ color: getThemeColor() }));
+                    modelGroup.add(rack);
+                    modelMesh = rack;
+                } else if (options.modelType === 'gear') {
+                    const geometry = new THREE.CylinderGeometry(0.8, 0.8, 0.3, 8);
+                    const material = new THREE.MeshStandardMaterial({ color: getThemeColor() });
+                    modelMesh = new THREE.Mesh(geometry, material);
+                    modelGroup.add(modelMesh);
+                } else if (options.modelType === 'rubiks') {
+                    const cubeSize = 0.5;
+                    const spacing = 0.52;
+                    const colors = {
+                        front: 0xffffff, // White
+                        back: 0xffff00,  // Yellow
+                        up: 0xffa500,   // Orange
+                        down: 0xff0000,   // Red
+                        left: 0x0000ff,  // Blue
+                        right: 0x00ff00, // Green
+                        inner: 0x1a1a1a
+                    };
+
+                    for (let x = -1; x <= 1; x++) {
+                        for (let y = -1; y <= 1; y++) {
+                            for (let z = -1; z <= 1; z++) {
+                                if (x === 0 && y === 0 && z === 0) continue;
+
+                                const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+                                const materials = [
+                                    new THREE.MeshStandardMaterial({ color: x === 1 ? colors.right : colors.inner }),
+                                    new THREE.MeshStandardMaterial({ color: x === -1 ? colors.left : colors.inner }),
+                                    new THREE.MeshStandardMaterial({ color: y === 1 ? colors.up : colors.inner }),
+                                    new THREE.MeshStandardMaterial({ color: y === -1 ? colors.down : colors.inner }),
+                                    new THREE.MeshStandardMaterial({ color: z === 1 ? colors.front : colors.inner }),
+                                    new THREE.MeshStandardMaterial({ color: z === -1 ? colors.back : colors.inner }),
+                                ];
+
+                                const cubelet = new THREE.Mesh(geometry, materials);
+                                cubelet.position.set(x * spacing, y * spacing, z * spacing);
+                                modelGroup.add(cubelet);
+                            }
+                        }
+                    }
+                    modelMesh = modelGroup;
+                }
+                scene.add(modelGroup);
+
+
+                // Mouse interaction for rotation
+                let isMouseDown = false;
+                let lastMouseX = 0;
+                let lastMouseY = 0;
+
+                container.addEventListener('mousedown', (e) => {
+                    isMouseDown = true;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                });
+                document.addEventListener('mouseup', () => { isMouseDown = false; });
+                document.addEventListener('mousemove', (e) => {
+                    if (!isMouseDown) return;
+                    const deltaX = e.clientX - lastMouseX;
+                    const deltaY = e.clientY - lastMouseY;
+                    modelGroup.rotation.y += deltaX * 0.01;
+                    modelGroup.rotation.x += deltaY * 0.01;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                });
+
+                // Render function
+                const render = () => {
+                    if (!isMouseDown) { // Auto-rotate when not dragging
+                        modelGroup.rotation.y += options.rotationY;
+                        modelGroup.rotation.x += options.rotationX;
+                    }
+                    renderer.render(scene, camera);
+                };
+
+                // Theme update function
+                const updateTheme = () => {
+                    const newColor = getThemeColor();
+                    if (options.modelType !== 'rubiks') {
+                         modelGroup.children.forEach(child => {
+                            if (child.material) {
+                                child.material.color.set(newColor);
+                            }
+                        });
+                    }
+                };
+
+                // Resize handler
+                const onResize = () => {
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                };
+                window.addEventListener('resize', onResize);
+
+                return { render, updateTheme };
+            }
+
+            // Initialize 3D Scenes
+            const heroScene = initThreeScene({
+                containerId: 'hero-3d-container',
+                modelType: 'earth', 
+                cameraZ: 4.5,
+                rotationX: 0.0,
+                rotationY: 0.002
+            });
+            const aboutScene = initThreeScene({
+                containerId: 'about-3d-container',
+                modelType: 'brain',
+                cameraZ: 3.5,
+                rotationX: 0.001,
+                rotationY: 0.003
+            });
+            const frontendScene = initThreeScene({
+                containerId: 'skill-frontend-3d',
+                modelType: 'laptop',
+                cameraZ: 3,
+                rotationX: 0.002,
+                rotationY: 0.005
+            });
+            const backendScene = initThreeScene({
+                containerId: 'skill-backend-3d',
+                modelType: 'server',
+                cameraZ: 4,
+                rotationX: 0.002,
+                rotationY: 0.005
+            });
+            const problemSolvingScene = initThreeScene({
+                containerId: 'skill-problem-solving-3d',
+                modelType: 'rubiks',
+                cameraZ: 4,
+                rotationX: 0.005,
+                rotationY: 0.005
+            });
+            const toolsScene = initThreeScene({
+                containerId: 'skill-tools-3d',
+                modelType: 'gear',
+                cameraZ: 3,
+                rotationX: 0.002,
+                rotationY: 0.005
+            });
+
+            if(heroScene) threeScenes.push(heroScene);
+            if(aboutScene) threeScenes.push(aboutScene);
+            if(frontendScene) threeScenes.push(frontendScene);
+            if(backendScene) threeScenes.push(backendScene);
+            if(problemSolvingScene) threeScenes.push(problemSolvingScene);
+            if(toolsScene) threeScenes.push(toolsScene);
+
+            // Main Animation Loop for all scenes
+            function animateAll() {
+                threeScenes.forEach(scene => scene.render());
+                requestAnimationFrame(animateAll);
+            }
+            if (threeScenes.length > 0) {
+                animateAll();
+            }
+
+            // Particle system configuration
+            const particleSettings = {
+                density: 50, // Default density (0-100)
+                size: 1.5,   // Default particle size
+                speed: 1.0,  // Default movement speed
+                connectivity: 50 // Connectivity level (0-100)
+            };
+            
+            // --- Interactive Particle Background Logic ---
+            const canvas = document.getElementById('interactive-background');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let mouse = { x: null, y: null };
+            let animationId;
+            let lastTimestamp = 0;
+            let frameCount = 0;
+            let fps = 0;
+
+            const lightColors = ["#4f46e5", "#a855f7", "#ec4899", "#f97316"];
+            const darkColors = ["#818cf8", "#c084fc", "#f472b6", "#fb923c"];
+            let currentColors = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initParticles();
+            }
+
+            function mapDensityToCount(density) {
+                return Math.floor(50 + (density / 100) * 250);
+            }
+
+            function mapConnectivityToDistance(connectivity) {
+                return 50 + (connectivity / 100) * 150;
+            }
+
+            class Particle {
+                constructor(x, y, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.baseX = x;
+                    this.baseY = y;
+                    this.size = Math.random() * particleSettings.size + 0.5;
+                    this.density = (Math.random() * 30) + 1;
+                    this.color = color;
+                    this.vx = (Math.random() - 0.5) * particleSettings.speed;
+                    this.vy = (Math.random() - 0.5) * particleSettings.speed;
+                }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                    
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    let maxDistance = 100;
+                    let force = (maxDistance - distance) / maxDistance;
+                    
+                    if (distance < maxDistance) {
+                        this.x -= (dx / distance) * force * this.density;
+                        this.y -= (dy / distance) * force * this.density;
+                    } else {
+                        if (this.x !== this.baseX) {
+                            let dx = this.x - this.baseX;
+                            this.x -= dx / 20;
+                        }
+                        if (this.y !== this.baseY) {
+                            let dy = this.y - this.baseY;
+                            this.y -= dy / 20;
+                        }
+                    }
+                    this.draw();
+                }
+            }
+            
+            function drawConnections() {
+                const connectionDistance = mapConnectivityToDistance(particleSettings.connectivity);
+                
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const p1 = particles[i];
+                        const p2 = particles[j];
+                        const dx = p1.x - p2.x;
+                        const dy = p1.y - p2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < connectionDistance) {
+                            const opacity = 1 - (distance / connectionDistance);
+                            ctx.strokeStyle = `rgba(${hexToRgb(p1.color)}, ${opacity * 0.5})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? 
+                    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+                    "0, 0, 0";
+            }
+
+            function initParticles() {
+                particles = [];
+                const isDark = document.documentElement.classList.contains('dark');
+                currentColors = isDark ? darkColors : lightColors;
+                
+                const particleCount = mapDensityToCount(particleSettings.density);
+                
+                for (let i = 0; i < particleCount; i++) {
+                    let x = Math.random() * canvas.width;
+                    let y = Math.random() * canvas.height;
+                    let color = currentColors[Math.floor(Math.random() * currentColors.length)];
+                    particles.push(new Particle(x, y, color));
+                }
+                
+                document.getElementById('particle-count').textContent = particles.length;
+            }
+
+            function animateParticles(timestamp) {
+                frameCount++;
+                
+                if (timestamp >= lastTimestamp + 1000) {
+                    fps = Math.round((frameCount * 1000) / (timestamp - lastTimestamp));
+                    lastTimestamp = timestamp;
+                    frameCount = 0;
+                    document.getElementById('fps-counter').textContent = fps;
+                }
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawConnections();
+                 connectToCursor(); // Draw lines to cursor
+                
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                }
+                
+                animationId = requestAnimationFrame(animateParticles);
+            }
+
+            function connectToCursor() {
+                if (mouse.x === null || mouse.y === null) return;
+
+                const connectionDistance = 250;
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+                const accentRgb = hexToRgb(accentColor); 
+
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    const dx = p.x - mouse.x;
+                    const dy = p.y - mouse.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < connectionDistance) {
+                        const opacity = 1 - (distance / connectionDistance);
+                        ctx.strokeStyle = `rgba(${accentRgb}, ${opacity * 0.6})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            // --- Journey Timeline Logic ---
+            const journeyData = [
+                { date: "March 2005", desc: "Born" },
+                { date: "2019", desc: "Completed 8th Grade with 96%" },
+                { date: "2021", desc: "Completed 10th Grade with 94%" },
+                { date: "2023", desc: "Completed 12th Grade with 86%" },
+                { date: "2024", desc: "Scored 81 Percentile in JEE" },
+                { date: "2024", desc: "Joined Dumka Engineering College (CSE)" },
+                { date: "2025", desc: "Sophomore Year of Engineering" },
+                { date: "2026", desc: "Preparing for Internships" }
+            ];
+
+            function setupTimeline() {
+                const timeline = document.getElementById('journey-timeline');
+                if (!timeline) return;
+                timeline.innerHTML = ''; // Clear previous content
+
+                journeyData.forEach((item, index) => {
+                    const isLeft = index % 2 === 0;
+                    const container = document.createElement('div');
+                    container.className = `timeline-container ${isLeft ? 'left' : 'right'}`;
+
+                    container.innerHTML = `
+                        <div class="timeline-content-box glass-card">
+                            <h3 class="timeline-date">${item.date}</h3>
+                            <p class="timeline-desc">${item.desc}</p>
+                        </div>
+                    `;
+                    timeline.appendChild(container);
+                });
+
+                // Intersection Observer to trigger animation
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const contentBox = entry.target.querySelector('.timeline-content-box');
+                            if (contentBox) {
+                                contentBox.classList.add('visible');
+                            }
+                        }
+                    });
+                }, { threshold: 0.2 });
+
+                document.querySelectorAll('.timeline-container').forEach(container => {
+                    observer.observe(container);
+                });
+            }
+            setupTimeline();
+
+
+            // --- Theme Toggling Logic ---
+            const themeToggleButton = document.getElementById('theme-toggle-button');
+            const moonIcon = document.getElementById('theme-icon-moon');
+            const sunIcon = document.getElementById('theme-icon-sun');
+            const htmlElement = document.documentElement;
+
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    htmlElement.classList.add('dark');
+                    moonIcon.style.display = 'none';
+                    sunIcon.style.display = 'inline-block';
+                } else {
+                    htmlElement.classList.remove('dark');
+                    moonIcon.style.display = 'inline-block';
+                    sunIcon.style.display = 'none';
+                }
+                setTimeout(() => {
+                    threeScenes.forEach(scene => scene.updateTheme());
+                    initParticles();
+                }, 50); 
+            };
+
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(savedTheme);
+
+            themeToggleButton.addEventListener('click', () => {
+                const newTheme = htmlElement.classList.contains('dark') ? 'light' : 'dark';
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+            
+            resizeCanvas();
+            animateParticles();
+            
+            // --- Particle Control Logic ---
+            const particleControls = document.getElementById('particle-controls');
+            const toggleControlsBtn = document.getElementById('toggle-controls');
+            const closeControlsBtn = document.getElementById('close-controls');
+            
+            toggleControlsBtn.addEventListener('click', () => {
+                particleControls.classList.toggle('open');
+            });
+            
+            closeControlsBtn.addEventListener('click', () => {
+                particleControls.classList.remove('open');
+            });
+            
+            // Slider controls
+            const densitySlider = document.getElementById('density-slider');
+            const densityValue = document.getElementById('density-value');
+            
+            const sizeSlider = document.getElementById('size-slider');
+            const sizeValue = document.getElementById('size-value');
+            
+            const speedSlider = document.getElementById('speed-slider');
+            const speedValue = document.getElementById('speed-value');
+            
+            const connectivitySlider = document.getElementById('connectivity-slider');
+            const connectivityValue = document.getElementById('connectivity-value');
+            
+            densitySlider.addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                particleSettings.density = value;
+                if (value < 33) densityValue.textContent = "Low";
+                else if (value < 66) densityValue.textContent = "Medium";
+                else densityValue.textContent = "High";
+                initParticles();
+            });
+            
+            sizeSlider.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                particleSettings.size = value;
+                if (value < 1.0) sizeValue.textContent = "Small";
+                else if (value < 2.0) sizeValue.textContent = "Medium";
+                else sizeValue.textContent = "Large";
+                updateParticleSettings();
+            });
+            
+            speedSlider.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                particleSettings.speed = value;
+                if (value < 1.0) speedValue.textContent = "Slow";
+                else if (value < 2.0) speedValue.textContent = "Medium";
+                else speedValue.textContent = "Fast";
+                updateParticleSettings();
+            });
+            
+            connectivitySlider.addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                particleSettings.connectivity = value;
+                if (value < 33) connectivityValue.textContent = "Low";
+                else if (value < 66) connectivityValue.textContent = "Medium";
+                else connectivityValue.textContent = "High";
+            });
+
+            // --- Cursor Effect ---
+            const cursorDot = document.getElementById('cursor-dot');
+            if (cursorDot) {
+                document.addEventListener('mousemove', function(e) {
+                    cursorDot.style.display = 'block';
+                    cursorDot.style.left = `${e.clientX}px`;
+                    cursorDot.style.top = `${e.clientY}px`;
+                });
+                document.addEventListener('mouseleave', () => {
+                    cursorDot.style.display = 'none';
+                });
+            }
+
+            // --- Scroll Progress Bar ---
+            const progressBar = document.getElementById('scroll-progress-bar');
+            document.addEventListener('scroll', function() {
+                const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+                const scrollPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
+                if(progressBar) progressBar.style.width = `${scrollPercent}%`;
+            });
+
+            // --- Mobile Menu Logic ---
+            const hamburgerToggle = document.getElementById('hamburgerToggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+            const hamburgerSpans = hamburgerToggle.querySelectorAll('span');
+
+            const toggleMenu = () => {
+                const isOpen = mobileMenu.classList.toggle('open');
+                document.body.style.overflow = isOpen ? 'hidden' : '';
+                hamburgerSpans[0].classList.toggle('rotate-45', isOpen);
+                hamburgerSpans[0].classList.toggle('translate-y-2', isOpen);
+                hamburgerSpans[1].classList.toggle('opacity-0', isOpen);
+                hamburgerSpans[2].classList.toggle('-rotate-45', isOpen);
+                hamburgerSpans[2].classList.toggle('-translate-y-2', isOpen);
+            };
+
+            hamburgerToggle.addEventListener('click', toggleMenu);
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (mobileMenu.classList.contains('open')) {
+                        toggleMenu();
+                    }
+                });
+            });
+
+            // --- Gemini AI Chatbot Logic ---
+            const chatButton = document.getElementById('ai-chat-button');
+            const chatWindow = document.getElementById('ai-chat-window');
+            const closeChatBtn = document.getElementById('close-chat-btn');
+            const chatMessages = document.querySelector('.chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const chatSendBtn = document.getElementById('chat-send-btn');
+            
+            let chatHistory = [{
+                role: "user",
+                parts: [{ text: `You are Rahnuma Parween's friendly and professional AI Portfolio Assistant. Your goal is to help recruiters, clients, and visitors learn more about her. Use the following information to answer questions. Be concise and helpful. If you are asked to draft an email or message, do so in a professional tone.
+
+                **PORTFOLIO INFORMATION:**
+                - Name: Rahnuma Parween
+                - Location: Dumka, Jharkhand, India
+                - Title: Web Developer
+                - Bio: A detail-oriented developer from Patna, Bihar, transforming ideas into seamless and engaging digital experiences. I specialize in writing clean, efficient, and scalable code to build products that are not only visually appealing but also provide a great user experience.
+                - Skills: Frontend (HTML, CSS, JS, React), Backend (Node.js, Java), Problem Solving (Data Structures & Algorithms in C++ & Java), Tools (Git, VS Code, IntelliJ).
+                - Projects:
+                  1. E-commerce Platform: Built with React and Node.js, featuring product search, cart, and payment integration.
+                  2. Task Management App: A collaborative MERN stack app with real-time updates via WebSockets.
+                  3. Personal Blog Site: A fast blog built with a static site generator and a custom CMS.
+                - Contact Email: rahnuma.parween.dev@gmail.com`}]
+            }, {
+                role: "model",
+                parts: [{ text: "Hi! I'm Rahnuma's AI Assistant. How can I help you today? You can ask about her skills or ask me to draft an email to her."}]
+            }];
+
+
+            if (chatButton && chatWindow && closeChatBtn && chatMessages && chatInput && chatSendBtn) {
+                const toggleChatWindow = () => chatWindow.classList.toggle('open');
+                chatButton.addEventListener('click', toggleChatWindow);
+                closeChatBtn.addEventListener('click', toggleChatWindow);
+
+                const addMessage = (sender, text) => {
+                    const messageElement = document.createElement('div');
+                    messageElement.className = `chat-message ${sender} mb-4 flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                    const bubble = document.createElement('div');
+                    bubble.className = 'bubble p-3 rounded-lg max-w-xs lg:max-w-md text-sm';
+                    bubble.textContent = text;
+                    messageElement.appendChild(bubble);
+                    chatMessages.appendChild(messageElement);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                };
+
+                const callGeminiAPI = async () => {
+                    addMessage('assistant', '...'); // Add loading indicator
+
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // API key will be injected by the environment
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                        
+                        const result = await response.json();
+                        
+                        chatMessages.removeChild(chatMessages.lastChild); // Remove loading indicator
+
+                        if (result.candidates && result.candidates.length > 0 && result.candidates[0].content.parts[0].text) {
+                            const text = result.candidates[0].content.parts[0].text;
+                            addMessage('assistant', text);
+                            chatHistory.push({ role: "model", parts: [{ text: text }] });
+                        } else {
+                            addMessage('assistant', "Sorry, I couldn't get a response. Please try again.");
+                        }
+                    } catch (error) {
+                        console.error("Gemini API call failed:", error);
+                        if (chatMessages.lastChild && chatMessages.lastChild.textContent === '...') {
+                           chatMessages.removeChild(chatMessages.lastChild);
+                        }
+                        addMessage('assistant', "Sorry, something went wrong. Please check the console for details.");
+                    }
+                };
+
+                const handleSendMessage = () => {
+                    const message = chatInput.value.trim();
+                    if (message) {
+                        addMessage('user', message);
+                        chatHistory.push({ role: "user", parts: [{ text: message }] });
+                        callGeminiAPI();
+                        chatInput.value = '';
+                    }
+                };
+
+                chatSendBtn.addEventListener('click', handleSendMessage);
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') handleSendMessage();
+                });
+                
+                // Display the initial assistant message
+                addMessage('assistant', "Hi! I'm Rahnuma's AI Assistant. How can I help you today? You can ask about her skills or ask me to draft an email to her.");
+            }
+            // --- Preloader ---
+            window.onload = () => {
+                const preloader = document.getElementById('preloader');
+                const mainContent = document.querySelector('.main-content');
+                const welcomeText = document.querySelector('.welcome-text');
+                
+                // 1. Show welcome text
+                setTimeout(() => {
+                    if(welcomeText) welcomeText.classList.add('visible');
+                }, 500);
+
+                // 2. Hide preloader and show main content
+                setTimeout(() => {
+                    if(preloader) preloader.style.opacity = '0';
+                    if(mainContent) mainContent.classList.add('loaded');
+
+                    setTimeout(() => {
+                        if(preloader) preloader.style.display = 'none';
+                    }, 800); 
+                }, 2500);
+            };
+        });
+    </script>
+</body>
+</html>
